@@ -1,0 +1,9 @@
+.env
+.env.*
+!.env.example
+/vendor/
+/certs/*.pem
+/certs/.gitkeep
+/storage/sessions/*
+!/storage/sessions/.gitkeep
+/storage/*.lock

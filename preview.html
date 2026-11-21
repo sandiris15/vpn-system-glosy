@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Preview · RUANG NOC NAT WAIPI</title>
+    <style>
+        :root { color-scheme: dark; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #e2e8f0; background: #07101f; }
+        * { box-sizing: border-box; }
+        body { margin: 0; min-height: 100vh; background: radial-gradient(ellipse at 8% 12%, rgba(235,44,177,.72), transparent 38%), radial-gradient(ellipse at 88% 18%, rgba(255,135,174,.52), transparent 36%), radial-gradient(ellipse at 73% 80%, rgba(120,35,223,.72), transparent 40%), radial-gradient(ellipse at 15% 92%, rgba(77,20,171,.68), transparent 38%), linear-gradient(145deg,#57105e,#311044 50%,#190b38); }
+        button { font: inherit; }
+        .login-screen { display: grid; min-height: 100vh; place-items: center; padding: 28px 16px; }
+        .login-wrap { width: min(100%, 440px); }
+        .login-brand { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 25px; }
+        .login-brand strong { display: block; color: #fff; font-size: 17px; }
+        .login-brand small { display: block; margin-top: 4px; color: #94a3b8; font-size: 11px; }
+        .login-panel { border: 1px solid #ffffff1b; border-radius: 25px; background: #2b0f3ebd; padding: 28px; box-shadow: 0 25px 80px #19032650,inset 0 1px #ffffff09; backdrop-filter: blur(25px); }
+        .login-panel .eyebrow { margin: 0 0 9px; color: #ffb1cb; }
+        .login-panel h1 { margin: 0; color: white; font-size: 25px; letter-spacing: -.03em; }
+        .login-panel .desc { margin: 9px 0 22px; color: #94a3b8; font-size: 12px; line-height: 1.65; }
+        .field { display: block; margin: 17px 0 7px; color: #cbd5e1; font-size: 11px; font-weight: 600; }
+        .login-panel input,.login-panel select { width: 100%; height: 44px; border: 1px solid #ffffff20; border-radius: 12px; outline: none; background: #02061766; padding: 0 12px; color: #e2e8f0; font-size: 12px; }
+        .login-panel input:focus,.login-panel select:focus { border-color: #ff8db8aa; box-shadow: 0 0 0 3px #fb71851a; }
+        .login-panel option { background: #0f172a; }
+        .login-hint { margin: 7px 0 0; color: #718096; font-size: 10px; line-height: 1.5; }
+        .login-submit { width: 100%; margin-top: 20px; cursor: pointer; }
+        .login-foot { margin-top: 20px; color: #64748b; font-size: 10px; line-height: 1.6; text-align: center; }
+        .divider { display:flex; align-items:center; gap:10px; margin:20px 0 13px; color:#64748b; font-size:9px; text-transform:uppercase; letter-spacing:.12em; }
+        .divider:before,.divider:after { height:1px; flex:1; background:#ffffff17; content:""; }
+        .change-chr { border:0; background:none; padding:0; color:#ffb1cb; cursor:pointer; font-size:10px; }
+        .selected-badge { border:1px solid #ffffff1b; border-radius:99px; background:#ffffff0b; padding:9px 12px; color:#dbe5f1; font-size:11px; white-space:nowrap; }
+        .modal { position:fixed; z-index:5; inset:0; display:grid; place-items:center; overflow:auto; background:#10051dc9; padding:18px; backdrop-filter:blur(12px); }
+        .modal[hidden] { display:none; }
+        .modal-panel { width:min(100%,650px); max-height:calc(100vh - 36px); overflow:auto; border:1px solid #ffffff24; border-radius:23px; background:#2b0f3ef5; padding:23px; box-shadow:0 28px 90px #13021c99; }
+        .modal-head { display:flex; align-items:start; justify-content:space-between; gap:16px; }
+        .modal-head h2 { margin:5px 0 0; color:#fff; font-size:19px; }
+        .modal-head p { margin:6px 0 0; color:#94a3b8; font-size:11px; line-height:1.55; }
+        .close-modal { border:1px solid #ffffff20; border-radius:10px; background:#ffffff0b; padding:6px 10px; color:#cbd5e1; cursor:pointer; }
+        .demo-form { display:grid; gap:12px; margin-top:20px; }
+        .demo-form label { display:block; margin-bottom:6px; color:#cbd5e1; font-size:11px; font-weight:600; }
+        .demo-form input { width:100%; height:42px; border:1px solid #ffffff20; border-radius:11px; outline:none; background:#150922a6; padding:0 12px; color:#e2e8f0; font-size:12px; }
+        .demo-form input:focus { border-color:#ff8db8aa; }
+        .demo-note { margin:15px 0 0; border:1px solid #fbbf2433; border-radius:12px; background:#fbbf240b; padding:11px 12px; color:#fde68a; font-size:10px; line-height:1.6; }
+        .success-mark { display:grid; width:42px; height:42px; place-items:center; border-radius:14px; background:#34d39920; color:#a7f3d0; font-size:20px; }
+        .script-output { max-height:330px; overflow:auto; margin:15px 0 0; border:1px solid #ffffff18; border-radius:15px; background:#100919; padding:15px; color:#ffd0df; font:11px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace; white-space:pre-wrap; overflow-wrap:anywhere; }
+        .modal-actions { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:9px; margin-top:17px; }
+        .secondary-button { min-height:40px; border:1px solid #ffffff20; border-radius:12px; background:#ffffff0b; padding:0 13px; color:#e2e8f0; font-size:11px; cursor:pointer; }
+        .mandiri-connect-panel { border:1px solid #ffffff1b; border-radius:25px; background:#2b0f3ebd; padding:25px; box-shadow:0 25px 80px #19032650,inset 0 1px #ffffff09; backdrop-filter:blur(25px); }
+        .mandiri-form { display:grid; gap:15px; }
+        .mandiri-form label { display:block; margin-bottom:7px; color:#cbd5e1; font-size:11px; font-weight:600; }
+        .mandiri-form input:not([type=checkbox]) { width:100%; height:43px; border:1px solid #ffffff20; border-radius:11px; outline:none; background:#150922a6; padding:0 12px; color:#e2e8f0; font-size:12px; }
+        .mandiri-form input:focus { border-color:#ff8db8aa; }
+        .mandiri-form input::placeholder { color:#718096; }
+        .mandiri-form select { width:100%; height:43px; border:1px solid #ffffff20; border-radius:11px; background:#150922a6; padding:0 12px; color:#e2e8f0; font-size:12px; }
+        .mandiri-form option { background:#220731; }
+        .mandiri-hint { margin:6px 0 0; color:#718096; font-size:10px; line-height:1.55; }
+        .mandiri-shell { display:flex; min-height:100vh; }
+        .mandiri-main { min-width:0; flex:1; }
+        .mandiri-content { width:min(100%,1500px); margin:auto; padding:32px 36px 48px; }
+        .mandiri-stats { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; margin:22px 0; }
+        .mandiri-stat { border:1px solid #ffffff20; border-radius:19px; background:#2b0f3e99; padding:17px; }
+        .mandiri-stat small { color:#94a3b8; font-size:10px; }
+        .mandiri-stat strong { display:block; margin-top:9px; color:#fff; font-size:14px; font-weight:600; overflow-wrap:anywhere; }
+        .mandiri-grid { display:grid; grid-template-columns:minmax(0,1fr) 285px; gap:16px; }
+        .mandiri-panel { border:1px solid #ffffff20; border-radius:22px; background:#2b0f3e99; padding:21px; box-shadow:0 18px 55px #19032640,inset 0 1px #ffffff0d; backdrop-filter:blur(20px); }
+        .mandiri-panel h2 { margin:0; color:#fff; font-size:15px; }
+        .mandiri-panel .panel-desc { margin:6px 0 18px; color:#94a3b8; font-size:11px; line-height:1.55; }
+        .mandiri-side { display:grid; align-content:start; gap:14px; }
+        .mandiri-flow { display:grid; gap:13px; margin:0; padding:0; list-style:none; }
+        .mandiri-flow li { display:flex; gap:10px; color:#aab7ca; font-size:10px; line-height:1.5; }
+        .mandiri-flow b { display:grid; width:21px; height:21px; flex:0 0 21px; place-items:center; border-radius:7px; background:#fb71851c; color:#ffb1cb; font-size:9px; }
+        .mandiri-success { margin-top:18px; border:1px solid #34d39930; border-radius:16px; background:#34d3990d; padding:16px; }
+        .mandiri-script { margin-top:16px; border:1px solid #ffffff18; border-radius:15px; background:#100919; padding:15px; color:#ffd0df; font:10px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace; white-space:pre-wrap; overflow-wrap:anywhere; }
+        @media (max-width: 900px) { .mandiri-content { padding-right:25px; padding-left:25px; } .mandiri-grid { grid-template-columns:1fr; } .mandiri-side { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+        @media (max-width: 740px) { .mandiri-sidebar { position:fixed; z-index:2; width:265px; transform:translateX(-100%); transition:transform .2s ease; } .mandiri-sidebar.open { transform:translateX(0); } .mandiri-shell { width:100%; } .mandiri-main header { height:62px; padding:0 17px; } .mandiri-content { padding:25px 17px 36px; } .mandiri-stats { grid-template-columns:1fr; gap:10px; } .mandiri-side { grid-template-columns:1fr; } }
+        .app { display: flex; min-height: 100vh; }
+        .sidebar { position: sticky; top: 0; display: flex; width: 265px; height: 100vh; flex: 0 0 265px; flex-direction: column; border-right: 1px solid #ffffff17; background: #220731d1; padding: 20px; backdrop-filter: blur(24px); }
+        .window-controls { display:flex; gap:6px; margin:1px 0 20px 4px; }
+        .window-controls span { width:10px; height:10px; border-radius:50%; }
+        .brand { display: flex; align-items: center; gap: 12px; margin: 3px 4px 36px; }
+        .logo { display: grid; width: 42px; height: 42px; place-items: center; border: 1px solid #ff8db83d; border-radius: 15px; background: #fb71851e; color: #ffb1cb; font-size: 23px; }
+        .brand strong { display: block; color: #fff; font-size: 14px; letter-spacing: .03em; }
+        .brand small { display: block; margin-top: 4px; color: #8998ad; font-size: 11px; }
+        .eyebrow { margin: 0 12px 10px; color: #64748b; font-size: 10px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; }
+        nav { display: grid; gap: 5px; }
+        .nav { display: flex; align-items: center; gap: 13px; border-radius: 12px; padding: 12px; color: #aab7ca; font-size: 13px; }
+        .nav .ico { width: 18px; color: #8ca1b9; text-align: center; font-size: 16px; }
+        .nav.active { background: linear-gradient(100deg,#ff9fc33d,#cd71f11f); box-shadow: inset 2px 0 #ff8bb6; color: #fff1f7; }
+        .nav.active .ico { color: #ffb1cb; }
+        .connection { margin-top: auto; border: 1px solid #ffffff18; border-radius: 17px; background: #ffffff09; padding: 15px; }
+        .connection b { font-size: 12px; font-weight: 600; }
+        .connection p { margin: 9px 0 0; color: #94a3b8; font-size: 11px; line-height: 1.65; }
+        .dot { display: inline-block; width: 7px; height: 7px; margin-right: 7px; border-radius: 50%; background: #6ee7b7; vertical-align: 1px; box-shadow: 0 0 12px #6ee7b755; }
+        .main { min-width: 0; flex: 1; }
+        header { display: flex; height: 72px; align-items: center; justify-content: space-between; border-bottom: 1px solid #ffffff17; padding: 0 36px; }
+        .crumb { color: #94a3b8; font-size: 12px; }
+        .user { display: flex; align-items: center; gap: 10px; color: #cbd5e1; font-size: 12px; }
+        .avatar { display: grid; width: 33px; height: 33px; place-items: center; border-radius: 50%; background: linear-gradient(135deg,#ffc184,#ff8da5 52%,#f47bd1); color: #32102e; font-weight: 700; }
+        .content { width: min(100%, 1500px); margin: auto; padding: 34px 36px 48px; }
+        .intro { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin-bottom: 25px; }
+        .intro p { margin: 0; color: #94a3b8; font-size: 13px; }
+        h1 { margin: 7px 0 8px; color: #fff; font-size: clamp(26px,3vw,34px); letter-spacing: -.04em; }
+        h1 span { color: #ffb1cb; }
+        .sub { margin: 0; color: #94a3b8; font-size: 13px; }
+        .primary { display: inline-flex; min-height: 43px; align-items: center; justify-content: center; gap: 8px; border: 1px solid #ffc18488; border-radius: 13px; background: linear-gradient(110deg,#ffc184,#ff8da5 52%,#f47bd1); padding: 0 16px; color: #32102e; font-size: 13px; font-weight: 650; white-space: nowrap; box-shadow: 0 7px 25px #fb718533; }
+        .stats { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 15px; }
+        .card,.panel { border: 1px solid #ffffff20; background: #2b0f3e99; box-shadow: 0 18px 55px #19032640,inset 0 1px #ffffff0d; backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px); }
+        .card { min-height: 145px; border-radius: 22px; padding: 19px; }
+        .stat-top { display: flex; align-items: center; justify-content: space-between; color: #94a3b8; font-size: 12px; }
+        .stat-ico { display: grid; width: 36px; height: 36px; place-items: center; border-radius: 12px; font-size: 17px; }
+        .cyan { color: #ffb1d0; background: #f472b629; }
+        .green { color: #a7f3d0; background: #34d3991f; }
+        .amber { color: #fde68a; background: #fbbf241f; }
+        .violet { color: #ddd6fe; background: #a78bfa22; }
+        .value { margin-top: 16px; color: #fff; font-size: 30px; font-weight: 650; letter-spacing: -.04em; }
+        .hint { margin-top: 5px; color: #64748b; font-size: 10px; }
+        .servers { display: grid; grid-template-columns: minmax(0, 1fr); gap: 15px; margin-top: 15px; }
+        .server { border-radius: 21px; padding: 18px; }
+        .server-head { display: flex; align-items: start; justify-content: space-between; gap: 8px; }
+        .server small { color: #94a3b8; font-size: 11px; }
+        .server h2 { margin: 5px 0 0; color: #fff; font-size: 14px; font-weight: 600; }
+        .pill { display: inline-flex; align-items: center; gap: 6px; border-radius: 99px; background: #34d3991c; padding: 6px 9px; color: #a7f3d0; font-size: 10px; font-weight: 650; white-space: nowrap; }
+        .pill.off { background: #94a3b81c; color: #cbd5e1; }
+        .pill .dot { width: 6px; height: 6px; margin: 0; box-shadow: none; }
+        .server-meta { display: flex; justify-content: space-between; gap: 8px; margin-top: 16px; border-top: 1px solid #ffffff13; padding-top: 12px; color: #73839a; font-size: 10px; }
+        .server-meta + .server-meta { margin-top: 10px; border: 0; padding-top: 0; }
+        .server-meta span:last-child { overflow: hidden; color: #cbd5e1; text-overflow: ellipsis; white-space: nowrap; }
+        .panel { overflow: hidden; margin-top: 25px; border-radius: 24px; }
+        .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 15px; border-bottom: 1px solid #ffffff17; padding: 19px 22px; }
+        .panel-head h2 { margin: 0; color: #fff; font-size: 14px; font-weight: 600; }
+        .panel-head p { margin: 5px 0 0; color: #94a3b8; font-size: 11px; }
+        .link { color: #ffb1cb; font-size: 12px; font-weight: 550; white-space: nowrap; }
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 11px; color: #aab7ca; }
+        th { background: #ffffff07; padding: 13px 20px; color: #73839a; font-size: 9px; font-weight: 650; letter-spacing: .1em; text-transform: uppercase; }
+        td { border-top: 1px solid #ffffff10; padding: 15px 20px; white-space: nowrap; }
+        td strong { color: #f1f5f9; font-weight: 550; }
+        .mobile-toggle { display: none; border: 1px solid #ffffff20; border-radius: 10px; background: #ffffff0d; padding: 8px 11px; color: #e2e8f0; }
+        @media (max-width: 1050px) { .sidebar { width: 235px; flex-basis: 235px; } .content { padding-right: 25px; padding-left: 25px; } header { padding: 0 25px; } .stats { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+        @media (max-width: 740px) { .sidebar { position: fixed; z-index: 2; width: 265px; transform: translateX(-100%); transition: transform .2s ease; } .sidebar.open { transform: translateX(0); } .main { width: 100%; } header { height: 62px; padding: 0 17px; } .crumb { display: none; } .mobile-toggle { display: inline-flex; } .content { padding: 25px 17px 36px; } .intro { align-items: start; flex-direction: column; } .intro .primary { width: 100%; } .servers { grid-template-columns: 1fr; } }
+        @media (max-width: 480px) { .stats { gap: 10px; } .card { min-height: 132px; padding: 14px; } .stat-top { gap: 5px; font-size: 10px; } .stat-ico { width: 31px; height: 31px; } .value { font-size: 26px; } .panel-head { align-items: start; padding: 16px; } th,td { padding-right: 14px; padding-left: 14px; } }
+    </style>
+</head>
+<body>
+    <section class="login-screen" id="loginScreen">
+        <div class="login-wrap">
+            <div class="login-brand"><div class="logo">⌁</div><div><strong>RUANG NOC NAT WAIPI</strong><small>Network operations portal</small></div></div>
+            <form class="login-panel" id="loginForm">
+                <p class="eyebrow">Managed access</p>
+                <h1>Masuk ke NOC</h1>
+                <p class="desc">Pilih satu CHR yang ingin dikelola sebelum masuk. Seluruh menu setelah login akan dibatasi ke server pilihan ini.</p>
+                <label class="field" for="chrChoice">Server CHR</label>
+                <select id="chrChoice" required>
+                    <option value="jakarta" data-name="VPN Jakarta" data-host="vpn-jakarta.example.id" data-status="Online" data-last="Baru saja" data-total="48" data-active="39" data-offline="9" data-nat="27">VPN Jakarta</option>
+                    <option value="telkom" data-name="VPN PTK Telkom" data-host="vpn-ptk-telkom.example.id" data-status="Online" data-last="2 menit lalu" data-total="52" data-active="42" data-offline="10" data-nat="31">VPN PTK Telkom</option>
+                    <option value="thc" data-name="VPN PTK THC" data-host="vpn-ptk-thc.example.id" data-status="Offline" data-last="18 menit lalu" data-total="28" data-active="15" data-offline="13" data-nat="16">VPN PTK THC</option>
+                </select>
+                <p class="login-hint">Untuk mengganti CHR, akhiri sesi dan login kembali.</p>
+                <label class="field" for="email">Email</label>
+                <input id="email" type="email" required placeholder="nama@perusahaan.id" autocomplete="username">
+                <label class="field" for="password">Password</label>
+                <input id="password" type="password" required placeholder="Masukkan password" autocomplete="current-password">
+                <button class="primary login-submit" type="submit">Masuk ke dashboard　→</button>
+                <div class="divider">atau</div>
+                <button class="secondary-button" type="button" id="mandiriModeLink" style="display:block;width:100%">Lanjutkan dengan router mandiri</button>
+                <p class="login-foot">Preview tampilan saja. Form login ini tidak mengirimkan kredensial ke server mana pun.</p>
+            </form>
+        </div>
+    </section>
+    <section class="login-screen" id="mandiriConnect" style="display:none">
+        <div class="login-wrap">
+            <div class="login-brand"><div class="logo">⌁</div><div><strong>RUANG NOC NAT WAIPI</strong><small>Mandiri provisioning session</small></div></div>
+            <form class="mandiri-connect-panel mandiri-form" id="mandiriConnectionForm">
+                <div><p class="eyebrow" style="margin:0 0 9px;color:#ffb1cb">Remote IP Public Mandiri</p><h1 style="margin:0;color:#fff;font-size:25px">Hubungkan MikroTik</h1><p class="mandiri-hint" style="margin-top:8px">Hubungkan ke REST API RouterOS v7 melalui HTTPS untuk sesi provisioning sementara.</p></div>
+                <div><label for="mandiriHost">IP publik atau hostname</label><input id="mandiriHost" value="router.example.id" placeholder="router.example.id" required></div>
+                <div style="display:grid;grid-template-columns:120px minmax(0,1fr);gap:12px">
+                    <div><label for="mandiriPort">Port HTTPS</label><input id="mandiriPort" type="number" min="1" max="65535" value="443" required></div>
+                    <div><label for="mandiriUser">Username MikroTik</label><input id="mandiriUser" value="provision-user" autocomplete="username" required></div>
+                </div>
+                <div><label for="mandiriPassword">Password MikroTik</label><input id="mandiriPassword" type="password" placeholder="Hanya untuk sesi ini" autocomplete="new-password" required><p class="mandiri-hint">Preview ini tidak mengirim atau menyimpan kredensial. Pada aplikasi, backend harus menyimpannya sementara di session ber-TTL, bukan MySQL.</p></div>
+                <label style="display:flex;align-items:flex-start;gap:9px;color:#cbd5e1;font-weight:400"><input type="checkbox" checked required style="width:15px;height:15px;margin-top:1px;accent-color:#ff8db8">Verifikasi sertifikat TLS<span class="mandiri-hint" style="margin:0">Sertifikat harus dipercaya oleh server aplikasi.</span></label>
+                <div style="display:flex;justify-content:space-between;gap:10px;margin-top:4px"><button class="secondary-button" type="button" id="mandiriBackToLogin">Kembali</button><button class="primary" type="submit">Uji koneksi &amp; lanjutkan →</button></div>
+            </form>
+            <p class="login-foot">Akses REST API HTTPS saja. Jangan buka port API router ke internet tanpa pembatasan sumber.</p>
+        </div>
+    </section>
+    <div class="app" id="dashboard" style="display:none">
+        <aside class="sidebar" id="sidebar">
+            <div class="window-controls" aria-hidden="true"><span style="background:#fb7185"></span><span style="background:#fbbf24"></span><span style="background:#4ade80"></span></div>
+            <div class="brand"><div class="logo">⌁</div><div><strong>RUANG NOC NAT WAIPI</strong><small>Network operations</small></div></div>
+            <p class="eyebrow">Workspace</p>
+            <nav aria-label="Navigasi">
+                <div class="nav active"><span class="ico">▦</span>Dashboard</div>
+                <div class="nav"><span class="ico">◉</span>Akun VPN</div>
+                <div class="nav"><span class="ico">＋</span>Buat konfigurasi</div>
+                <div class="nav"><span class="ico">⚙</span>Preferensi</div>
+            </nav>
+            <div class="connection"><b><span class="dot"></span>CHR terpilih</b><p id="sidebarChr">VPN Jakarta</p><button class="change-chr" onclick="switchChr()">Keluar &amp; ganti CHR →</button></div>
+        </aside>
+        <main class="main">
+            <header><div style="display:flex;align-items:center;gap:12px"><button class="mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')" aria-label="Buka menu">☰</button><span class="crumb">NOC　/　Dashboard</span></div><div class="user"><span class="selected-badge" id="headerChr">VPN Jakarta</span><span class="avatar">N</span><span>Network Operator</span></div></header>
+            <div class="content">
+                <section class="intro">
+                    <div><p>Ringkasan jaringan</p><h1>Dashboard <span>NOC</span></h1><p class="sub">Manajemen terbatas pada CHR yang dipilih saat login.</p></div>
+                    <button class="primary" id="createVpnButton">＋ <span>Buat akun VPN</span></button>
+                </section>
+                <section class="stats" aria-label="Statistik VPN">
+                    <article class="card"><div class="stat-top"><span>Total akun VPN</span><span class="stat-ico cyan">◉</span></div><div class="value" id="statTotal">48</div><div class="hint">Hanya pada CHR terpilih</div></article>
+                    <article class="card"><div class="stat-top"><span>VPN aktif</span><span class="stat-ico green">↗</span></div><div class="value" id="statActive">39</div><div class="hint">Hanya pada CHR terpilih</div></article>
+                    <article class="card"><div class="stat-top"><span>VPN offline</span><span class="stat-ico amber">↘</span></div><div class="value" id="statOffline">9</div><div class="hint">Hanya pada CHR terpilih</div></article>
+                    <article class="card"><div class="stat-top"><span>Aturan DST-NAT</span><span class="stat-ico violet">⌘</span></div><div class="value" id="statNat">27</div><div class="hint">Hanya pada CHR terpilih</div></article>
+                </section>
+                <section class="servers" aria-label="Status CHR terpilih">
+                    <article class="card server"><div class="server-head"><div><small>CHR yang sedang dikelola</small><h2 id="serverName">VPN Jakarta</h2></div><span class="pill" id="serverStatus"><span class="dot"></span><span id="serverStatusText">Online</span></span></div><div class="server-meta"><span>Host</span><span id="serverHost">vpn-jakarta.example.id</span></div><div class="server-meta"><span>Terakhir terhubung</span><span id="serverLast">Baru saja</span></div></article>
+                </section>
+                <section class="panel">
+                    <div class="panel-head"><div><h2>Akun VPN terbaru</h2><p>Status diambil dari sesi PPP Active router.</p></div><span class="link">Lihat semua　→</span></div>
+                    <div class="table-wrap"><table><thead><tr><th>Username</th><th>Remote address</th><th>Status</th><th>Uptime</th></tr></thead><tbody>
+                        <tr data-chr="jakarta"><td><strong>kantor-pusat</strong></td><td style="font-family:monospace">10.222.0.2</td><td><span class="pill"><span class="dot"></span>Online</span></td><td>2d 04:32:18</td></tr>
+                        <tr data-chr="telkom"><td><strong>cabang-barat</strong></td><td style="font-family:monospace">10.222.1.14</td><td><span class="pill"><span class="dot"></span>Online</span></td><td>6h 12:45</td></tr>
+                        <tr data-chr="jakarta"><td><strong>router-toko-03</strong></td><td style="font-family:monospace">10.222.0.8</td><td><span class="pill off"><span class="dot" style="background:#94a3b8"></span>Offline</span></td><td>—</td></tr>
+                        <tr data-chr="thc"><td><strong>router-gudang</strong></td><td style="font-family:monospace">10.222.3.8</td><td><span class="pill"><span class="dot"></span>Online</span></td><td>1h 18:02</td></tr>
+                    </tbody></table></div>
+                </section>
+                <p style="margin:14px 2px 0;color:#64748b;font-size:10px">Preview tampilan saja — angka dan status CHR ini adalah contoh, bukan data router sebenarnya.</p>
+            </div>
+        </main>
+    </div>
+    <div class="mandiri-shell" id="mandiriDashboard" style="display:none">
+        <aside class="sidebar mandiri-sidebar" id="mandiriSidebar">
+            <div class="window-controls" aria-hidden="true"><span style="background:#fb7185"></span><span style="background:#fbbf24"></span><span style="background:#4ade80"></span></div>
+            <div class="brand"><div class="logo">⌁</div><div><strong>RUANG NOC NAT WAIPI</strong><small>Remote provisioning</small></div></div>
+            <p class="eyebrow">Mandiri</p>
+            <nav aria-label="Navigasi mode mandiri">
+                <div class="nav active"><span class="ico">＋</span>Provisioning</div>
+                <div class="nav"><span class="ico">⌁</span>Koneksi router</div>
+            </nav>
+            <div class="connection"><b><span class="dot"></span>Sesi sementara</b><p id="mandiriSidebarHost">router.example.id</p><button class="change-chr" type="button" id="mandiriEndSession">Akhiri sesi →</button></div>
+        </aside>
+        <main class="mandiri-main">
+            <header><div style="display:flex;align-items:center;gap:12px"><button class="mobile-toggle" onclick="document.getElementById('mandiriSidebar').classList.toggle('open')" aria-label="Buka menu mandiri">☰</button><span class="crumb">Mode Mandiri　/　Provisioning</span></div><div class="user"><span class="selected-badge" id="mandiriHeaderHost">router.example.id</span><span class="avatar">M</span><span>Mitra</span></div></header>
+            <div class="mandiri-content">
+                <section class="intro">
+                    <div><p>Remote IP Public Mandiri</p><h1>Provisioning <span>Mandiri</span></h1><p class="sub">Tambah konfigurasi VPN pada MikroTik yang Anda kelola.</p></div>
+                    <span class="pill"><span class="dot"></span>Router terhubung</span>
+                </section>
+                <section class="mandiri-stats" aria-label="Status sesi mandiri">
+                    <article class="mandiri-stat"><small>Router terkoneksi</small><strong id="mandiriRouterStat">router.example.id</strong></article>
+                    <article class="mandiri-stat"><small>REST API</small><strong>HTTPS · <span id="mandiriPortStat">443</span></strong></article>
+                    <article class="mandiri-stat"><small>Mode data</small><strong>Session sementara · tanpa tabel monitoring</strong></article>
+                </section>
+                <div class="mandiri-grid">
+                    <section class="mandiri-panel">
+                        <div id="mandiriAddSection">
+                            <h2>Add Configuration</h2>
+                            <p class="panel-desc">Buat PPP Secret SSTP. Setelah provisioning selesai, buat script client untuk di-copy ke router tujuan.</p>
+                            <form class="mandiri-form" id="mandiriProvisionForm">
+                                <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px">
+                                    <div><label for="mandiriVpnUser">Username VPN</label><input id="mandiriVpnUser" value="cabang-demo" required></div>
+                                    <div><label for="mandiriVpnPass">Password VPN</label><input id="mandiriVpnPass" type="password" placeholder="Password kuat" required></div>
+                                    <div><label for="mandiriLocalIp">Local address</label><input id="mandiriLocalIp" value="10.10.0.1" required></div>
+                                    <div><label for="mandiriRemoteIp">Remote address</label><input id="mandiriRemoteIp" value="10.10.0.2" required></div>
+                                </div>
+                                <div><label for="mandiriSstpPort">Port SSTP</label><input id="mandiriSstpPort" type="number" min="1" max="65535" value="443" required><p class="mandiri-hint">Gunakan port SSTP server pada router ini; bukan port REST API kecuali memang sama.</p></div>
+                                <label style="display:flex;align-items:flex-start;gap:9px;color:#cbd5e1;font-weight:400"><input id="mandiriDefaultRoute" type="checkbox" style="width:15px;height:15px;margin-top:1px;accent-color:#ff8db8">Tambahkan default route ke script client</label>
+                                <p class="demo-note" style="margin:0">Mode Mandiri menyediakan Add Configuration dan Script Generator saja. Kredensial router hanya digunakan di sesi sementara, tidak masuk database atau riwayat.</p>
+                                <div style="display:flex;justify-content:flex-end"><button class="primary" type="submit">Add Configuration　→</button></div>
+                            </form>
+                        </div>
+                        <section class="mandiri-success" id="mandiriProvisionSuccess" hidden>
+                            <span class="pill"><span class="dot"></span>Provisioning berhasil</span>
+                            <h2 style="margin-top:13px">Konfigurasi VPN siap</h2>
+                            <p class="panel-desc" style="margin-bottom:13px">Akun <strong id="mandiriCreatedUser" style="color:#fff"></strong> ditambahkan pada sesi router ini.</p>
+                            <button class="primary" type="button" id="mandiriGenerateButton">Script Generator　→</button>
+                        </section>
+                        <section id="mandiriScriptSection" hidden>
+                            <div style="display:flex;align-items:start;justify-content:space-between;gap:12px"><div><h2>Script SSTP Client</h2><p class="panel-desc">Preview script RouterOS v7, berisi placeholder untuk nilai rahasia.</p></div><button class="secondary-button" type="button" id="mandiriCopyButton">Salin</button></div>
+                            <pre class="mandiri-script" id="mandiriScriptOutput"></pre>
+                            <p class="mandiri-hint">Jangan bagikan script karena berisi password VPN. Atur sertifikat server agar valid; hindari mematikan verifikasi TLS.</p>
+                        </section>
+                    </section>
+                    <aside class="mandiri-side">
+                        <section class="mandiri-panel"><h2>Sesi aman</h2><p class="panel-desc" style="margin-bottom:0">Kredensial router hanya hidup selama sesi. Akhiri sesi setelah provisioning selesai untuk menghapus akses sementara.</p></section>
+                        <section class="mandiri-panel"><h2>Alur kerja</h2><ol class="mandiri-flow" style="margin-top:14px"><li><b>1</b><span>Uji koneksi REST API dengan TLS terverifikasi.</span></li><li><b>2</b><span>Tambah konfigurasi SSTP pada router yang terhubung.</span></li><li><b>3</b><span>Generate dan copy script client.</span></li></ol></section>
+                        <section class="mandiri-panel"><h2>Bukan monitoring</h2><p class="panel-desc" style="margin-bottom:0">Mode ini tidak menampilkan daftar akun, status online, tabel monitoring, edit, atau delete.</p></section>
+                    </aside>
+                </div>
+                <p style="margin:14px 2px 0;color:#64748b;font-size:10px">Preview Mandiri — formulir hanya simulasi dan tidak mengubah konfigurasi router.</p>
+            </div>
+        </main>
+    </div>
+    <div class="modal" id="provisionDialog" hidden>
+        <section class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+            <div class="modal-head">
+                <div><p class="eyebrow" style="margin:0;color:#ffb1cb">VPN Provisioning</p><h2 id="modalTitle">Tambah akun VPN</h2><p>Simulasi antarmuka. Tidak ada perubahan ke router dari preview ini.</p></div>
+                <button class="close-modal" type="button" id="closeDialog" aria-label="Tutup">×</button>
+            </div>
+            <form class="demo-form" id="addVpnForm">
+                <div id="addVpnFields">
+                    <div><label for="newVpnUsername">Username VPN</label><input id="newVpnUsername" value="speedtest-demo" pattern="[A-Za-z0-9._\-]+" required></div>
+                    <p class="demo-note">Setelah akun berhasil dibuat, tombol Script Generator menyiapkan SSTP client, routing table, dan policy route untuk perangkat Speedtest pilihan.</p>
+                    <div class="modal-actions"><button class="primary" type="submit">Add VPN</button></div>
+                </div>
+            </form>
+            <div id="provisionSuccess" hidden>
+                <div class="success-mark">✓</div><h3 style="margin:13px 0 5px;color:#fff;font-size:16px">VPN berhasil ditambahkan</h3>
+                <p style="margin:0;color:#94a3b8;font-size:11px">Akun <strong id="createdVpnUsername" style="color:#f8fafc"></strong> siap dibuatkan script.</p>
+                <div class="modal-actions"><button class="primary" type="button" id="openGenerator">Script Generator　→</button></div>
+            </div>
+            <section id="generatorPanel" hidden>
+                <div class="demo-form">
+                    <div><label for="testClientIp">IP LAN perangkat Speedtest</label><input id="testClientIp" value="192.168.88.10" inputmode="decimal" required><p class="login-hint">Gunakan IP statis/reservasi DHCP. Contoh: 192.168.88.10.</p></div>
+                    <button class="primary" type="button" id="generateScript">Generate preview</button>
+                </div>
+                <p class="demo-note">Tidak ada satu IP server Speedtest ISP yang tetap. Rule ini mengarahkan seluruh trafik internet dari IP test tersebut melalui SSTP supaya situs melihat public IP/ISP egress CHR. Perangkat LAN lain tidak terpengaruh. Pastikan address-list `IP-Lokal` lengkap dan CHR melakukan source NAT ke WAN. Jika FastTrack aktif, rule FastTrack harus mengecualikan connection-mark `to-sstp`.</p>
+                <pre class="script-output" id="scriptOutput" hidden></pre>
+                <div class="modal-actions"><button class="secondary-button" type="button" id="copyScript" hidden>Salin script</button></div>
+            </section>
+        </section>
+    </div>
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const chrChoice = document.getElementById('chrChoice');
+        const dialog = document.getElementById('provisionDialog');
+
+        function applySelectedChr() {
+            const option = chrChoice.selectedOptions[0];
+            const value = option.value;
+            document.getElementById('sidebarChr').textContent = option.dataset.name;
+            document.getElementById('headerChr').textContent = option.dataset.name;
+            document.getElementById('serverName').textContent = option.dataset.name;
+            document.getElementById('serverHost').textContent = option.dataset.host;
+            document.getElementById('serverLast').textContent = option.dataset.last;
+            document.getElementById('serverStatusText').textContent = option.dataset.status;
+            document.getElementById('serverStatus').classList.toggle('off', option.dataset.status !== 'Online');
+            document.querySelectorAll('#serverStatus .dot').forEach(dot => {
+                dot.style.background = option.dataset.status === 'Online' ? '#6ee7b7' : '#94a3b8';
+            });
+            document.getElementById('statTotal').textContent = option.dataset.total;
+            document.getElementById('statActive').textContent = option.dataset.active;
+            document.getElementById('statOffline').textContent = option.dataset.offline;
+            document.getElementById('statNat').textContent = option.dataset.nat;
+            document.querySelectorAll('tbody tr[data-chr]').forEach(row => {
+                row.hidden = row.dataset.chr !== value;
+            });
+        }
+
+        loginForm.addEventListener('submit', event => {
+            event.preventDefault();
+            applySelectedChr();
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'flex';
+        });
+
+        function switchChr() {
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'grid';
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('password').value = '';
+        }
+
+        document.getElementById('createVpnButton').addEventListener('click', () => {
+            document.getElementById('addVpnFields').hidden = false;
+            document.getElementById('provisionSuccess').hidden = true;
+            document.getElementById('generatorPanel').hidden = true;
+            dialog.hidden = false;
+        });
+
+        document.getElementById('closeDialog').addEventListener('click', () => { dialog.hidden = true; });
+        dialog.addEventListener('click', event => { if (event.target === dialog) dialog.hidden = true; });
+
+        document.getElementById('addVpnForm').addEventListener('submit', event => {
+            event.preventDefault();
+            document.getElementById('createdVpnUsername').textContent = document.getElementById('newVpnUsername').value;
+            document.getElementById('addVpnFields').hidden = true;
+            document.getElementById('provisionSuccess').hidden = false;
+            document.getElementById('modalTitle').textContent = 'Provisioning berhasil';
+        });
+
+        document.getElementById('openGenerator').addEventListener('click', () => {
+            document.getElementById('provisionSuccess').hidden = true;
+            document.getElementById('generatorPanel').hidden = false;
+            document.getElementById('modalTitle').textContent = 'Script Generator';
+        });
+
+        document.getElementById('generateScript').addEventListener('click', () => {
+            const clientIp = document.getElementById('testClientIp').value.trim();
+            const ipv4 = /^(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)$/;
+            if (!ipv4.test(clientIp)) {
+                document.getElementById('testClientIp').setCustomValidity('Masukkan IP LAN IPv4 statis perangkat Speedtest.');
+                document.getElementById('testClientIp').reportValidity();
+                return;
+            }
+            document.getElementById('testClientIp').setCustomValidity('');
+            const option = chrChoice.selectedOptions[0];
+            const username = document.getElementById('newVpnUsername').value;
+            const script = [
+                '# RouterOS v7 — SSTP client + policy route for a dedicated Speedtest client',
+                '# Import CA certificate pada router client sebelum verify-server-certificate=yes.',
+                '/interface sstp-client',
+                `add name="sstp-out1" connect-to="${option.dataset.host}" port=443 user="${username}" password="<VPN_PASSWORD>" profile=default-encryption authentication=mschap2 verify-server-certificate=yes add-default-route=no disabled=no`,
+                '',
+                '# IP-Lokal harus sudah berisi semua subnet privat/LAN yang perlu tetap lewat route utama.',
+                '/routing table',
+                'add name=to-sstp fib',
+                '/ip route',
+                'add dst-address=0.0.0.0/0 gateway=sstp-out1 routing-table=to-sstp comment="Internet via SSTP"',
+                '/ip firewall mangle',
+                `add chain=prerouting src-address=${clientIp} dst-address-list=!IP-Lokal action=mark-connection new-connection-mark=to-sstp passthrough=yes comment="Dedicated Speedtest client via SSTP"`,
+                'add chain=prerouting connection-mark=to-sstp dst-address-list=!IP-Lokal action=mark-routing new-routing-mark=to-sstp passthrough=no comment="Dedicated Speedtest client via SSTP"',
+                '',
+                '# If FastTrack is enabled, update its existing rule to match connection-mark=no-mark.',
+                '# CHR also needs a source-NAT rule for the VPN pool out its WAN interface.',
+            ].join('\n');
+            document.getElementById('scriptOutput').textContent = script;
+            document.getElementById('scriptOutput').hidden = false;
+            document.getElementById('copyScript').hidden = false;
+        });
+
+        document.getElementById('copyScript').addEventListener('click', async () => {
+            const button = document.getElementById('copyScript');
+            try {
+                await navigator.clipboard.writeText(document.getElementById('scriptOutput').textContent);
+                button.textContent = 'Tersalin ✓';
+            } catch (error) {
+                button.textContent = 'Gagal menyalin';
+            }
+        });
+
+        const mandiriConnect = document.getElementById('mandiriConnect');
+        const mandiriDashboard = document.getElementById('mandiriDashboard');
+
+        document.getElementById('mandiriModeLink').addEventListener('click', () => {
+            document.getElementById('loginScreen').style.display = 'none';
+            mandiriConnect.style.display = 'grid';
+            location.hash = 'mandiri';
+        });
+
+        document.getElementById('mandiriBackToLogin').addEventListener('click', () => {
+            mandiriConnect.style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'grid';
+            location.hash = '';
+        });
+
+        document.getElementById('mandiriConnectionForm').addEventListener('submit', event => {
+            event.preventDefault();
+            const host = document.getElementById('mandiriHost').value.trim();
+            const port = document.getElementById('mandiriPort').value;
+            document.getElementById('mandiriSidebarHost').textContent = host;
+            document.getElementById('mandiriHeaderHost').textContent = host;
+            document.getElementById('mandiriRouterStat').textContent = host;
+            document.getElementById('mandiriPortStat').textContent = port;
+            document.getElementById('mandiriPassword').value = '';
+            mandiriConnect.style.display = 'none';
+            mandiriDashboard.style.display = 'flex';
+            location.hash = 'mandiri-dashboard';
+        });
+
+        document.getElementById('mandiriProvisionForm').addEventListener('submit', event => {
+            event.preventDefault();
+            document.getElementById('mandiriCreatedUser').textContent = document.getElementById('mandiriVpnUser').value;
+            document.getElementById('mandiriVpnPass').value = '';
+            document.getElementById('mandiriAddSection').hidden = true;
+            document.getElementById('mandiriProvisionSuccess').hidden = false;
+        });
+
+        document.getElementById('mandiriGenerateButton').addEventListener('click', () => {
+            const host = document.getElementById('mandiriHost').value.trim().replaceAll('\\', '\\\\').replaceAll('"', '\\"').replaceAll('\n', '');
+            const username = document.getElementById('mandiriVpnUser').value.trim().replaceAll('\\', '\\\\').replaceAll('"', '\\"').replaceAll('\n', '');
+            const port = document.getElementById('mandiriSstpPort').value;
+            const defaultRoute = document.getElementById('mandiriDefaultRoute').checked ? 'yes' : 'no';
+            const script = [
+                '# RouterOS v7 — SSTP client',
+                '# Import and trust the SSTP server CA certificate before enabling verification.',
+                '/interface sstp-client',
+                `add name="sstp-client-mandiri" connect-to="${host}" port=${port} user="${username}" password="<VPN_PASSWORD>" profile=default-encryption authentication=mschap2 verify-server-certificate=yes add-default-route=${defaultRoute} disabled=no`,
+            ].join('\n');
+            document.getElementById('mandiriScriptOutput').textContent = script;
+            document.getElementById('mandiriScriptSection').hidden = false;
+        });
+
+        document.getElementById('mandiriCopyButton').addEventListener('click', async event => {
+            const button = event.currentTarget;
+            try {
+                await navigator.clipboard.writeText(document.getElementById('mandiriScriptOutput').textContent);
+                button.textContent = 'Tersalin ✓';
+            } catch (error) {
+                button.textContent = 'Gagal menyalin';
+            }
+        });
+
+        document.getElementById('mandiriEndSession').addEventListener('click', () => {
+            mandiriDashboard.style.display = 'none';
+            document.getElementById('mandiriSidebar').classList.remove('open');
+            document.getElementById('mandiriScriptSection').hidden = true;
+            document.getElementById('mandiriProvisionSuccess').hidden = true;
+            document.getElementById('mandiriAddSection').hidden = false;
+            document.getElementById('mandiriHost').value = '';
+            document.getElementById('mandiriUser').value = '';
+            document.getElementById('mandiriPassword').value = '';
+            mandiriConnect.style.display = 'grid';
+            location.hash = 'mandiri';
+        });
+
+        if (location.hash === '#mandiri') {
+            document.getElementById('loginScreen').style.display = 'none';
+            mandiriConnect.style.display = 'grid';
+        }
+    </script>
+</body>
+</html>
