@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\AuditLog;
 use App\Models\Server;
+use App\Models\Topology;
 use App\Models\User;
 use Database\Seeders\OperatorAccountSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -153,6 +154,19 @@ class ManagedAccessTest extends TestCase
                 'user_agent' => 'Chrome on macOS',
             ],
         ]);
+        $olderTopology = Topology::query()->create([
+            'user_id' => $user->getKey(),
+            'name' => 'Topologi lama',
+            'password_hash' => Hash::make('password-lama'),
+            'design' => [['type' => 'text', 'x' => 100, 'y' => 100, 'text' => 'Lama']],
+        ]);
+        $olderTopology->forceFill(['created_at' => now()->subDays(2), 'updated_at' => now()])->save();
+        $latestTopology = Topology::query()->create([
+            'user_id' => $user->getKey(),
+            'name' => 'Topologi terbaru',
+            'password_hash' => Hash::make('password-baru'),
+            'design' => [['type' => 'rectangle', 'x' => 500, 'y' => 300, 'text' => 'Router kantor']],
+        ]);
 
         Http::preventStrayRequests();
         Http::fake([
@@ -193,7 +207,27 @@ class ManagedAccessTest extends TestCase
             ->assertSee('Managed CHR')
             ->assertSee('Dashboard VPN')
             ->assertSee('Diskusi terbaru')
-            ->assertDontSee('Topologi jaringan sederhana')
+            ->assertSeeInOrder([
+                'Workspace terbaru',
+                'Topologi terakhir dibuat',
+                'Diskusi terbaru',
+                'Status akun VPN terbaru',
+                'Notifikasi aktivitas',
+            ])
+            ->assertSeeInOrder([
+                'Topologi, Interface &amp; VLAN',
+                'Template Hotspot',
+                'Setup MikroTik Baru',
+                'Kumpulan Script Umum',
+                'Auto ON/OFF VLAN',
+                'Auto ON/OFF Ethernet',
+                'Auto Failover Route ISP',
+            ], false)
+            ->assertSee('Topologi terbaru')
+            ->assertSee('Router kantor')
+            ->assertDontSee('Topologi lama')
+            ->assertDontSee($latestTopology->password_hash)
+            ->assertSee('href="'.route('workspaces.topology.show', $latestTopology).'"', false)
             ->assertSee('branch-01')
             ->assertViewHas('activityLogs', fn ($logs): bool => $logs->contains(
                 fn (array $activity): bool => $activity['description'] === 'branch-01 · IP 10.10.0.2',
@@ -203,6 +237,17 @@ class ManagedAccessTest extends TestCase
                     && $activity['description'] === 'IP asal 203.0.113.9 · Perangkat/browser Chrome on macOS',
             ))
             ->assertDontSee('router-secret-must-not-render');
+
+        $user->forceFill(['role' => 'operator'])->save();
+        $this->get('/dashboard')
+            ->assertOk()
+            ->assertDontSee('Kumpulan Script Umum')
+            ->assertDontSee('Setup MikroTik Baru');
+
+        Topology::query()->delete();
+        $this->get('/dashboard')
+            ->assertOk()
+            ->assertSee('Belum ada topologi tersimpan.');
     }
 
     private function createServer(string $name): Server

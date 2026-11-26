@@ -148,4 +148,19 @@ class PreferencesController extends Controller
 
         return $response;
     }
+
+    public function updateSidebar(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'sidebar_title' => ['nullable', 'string', 'max:60'],
+            'sidebar_description' => ['nullable', 'string', 'max:240'],
+        ]);
+
+        $request->user()->preference()->updateOrCreate([], [
+            'sidebar_title' => $validated['sidebar_title'] ?? null,
+            'sidebar_description' => $validated['sidebar_description'] ?? null,
+        ]);
+
+        return redirect()->route('preferences.index')->with('status', 'Teks sidebar berhasil disimpan.');
+    }
 }

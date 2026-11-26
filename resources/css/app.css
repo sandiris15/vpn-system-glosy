@@ -58,6 +58,7 @@ body { background: #07101f; }
 .noc-hero { background:linear-gradient(115deg,rgba(71,24,76,.84),rgba(35,21,65,.72) 58%,rgba(18,33,58,.68)); }
 .noc-hero-glow { position:absolute; top:-9rem; right:-5rem; width:24rem; height:24rem; border-radius:999px; background:radial-gradient(circle,rgba(255,135,174,.18),rgba(177,111,255,.07) 46%,transparent 70%); pointer-events:none; }
 .preview-pill { display:inline-flex; align-items:center; border:1px solid rgba(255,190,195,.2); border-radius:999px; background:rgba(255,145,190,.09); padding:.3rem .55rem; color:#ffd0df; font-size:.58rem; font-weight:700; letter-spacing:.08em; }
+.preview-pill-active { border-color:rgba(52,211,153,.38); background:rgba(52,211,153,.16); color:#a7f3d0; }
 .preview-pill-muted { border-color:rgba(255,255,255,.1); background:rgba(255,255,255,.04); color:#aab7ca; letter-spacing:.02em; }
 .cluster-mini-card { min-width:0; border:1px solid rgba(255,255,255,.09); border-radius:1rem; background:rgba(2,6,23,.18); padding:.8rem; }
 .cluster-mini-primary { border-color:rgba(255,160,195,.26); background:rgba(255,145,190,.07); }

@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\AuditLog;
 use App\Models\ForumTopic;
 use App\Models\Server;
+use App\Models\Topology;
 use App\Services\RouterOsMonitor;
+use App\Support\WorkspaceCatalog;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\Request;
@@ -112,6 +114,10 @@ class DashboardController extends Controller
             'recentAccounts' => $recentAccounts,
             'activityLogs' => $activityLogs,
             'forumTopics' => $forumTopics,
+            'recentWorkspaces' => WorkspaceCatalog::visibleTo($request->user())
+                ->filter(fn (array $workspace): bool => isset($workspace['recent_rank']))
+                ->sortByDesc('recent_rank'),
+            'latestTopology' => Topology::query()->latest('created_at')->latest('id')->first(),
         ]);
     }
 }

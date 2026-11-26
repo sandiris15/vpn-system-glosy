@@ -13,6 +13,8 @@ class UserPreference extends Model
         'wallpaper_upload_path',
         'blur',
         'overlay',
+        'sidebar_title',
+        'sidebar_description',
     ];
 
     protected function casts(): array

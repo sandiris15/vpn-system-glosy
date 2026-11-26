@@ -1,8 +1,8 @@
 {
-    "name": "vpn-management/sstp-console",
+    "name": "ruang-noc-natwaipi/sstp-console",
     "type": "project",
-    "description": "SSTP Console application",
-    "keywords": ["laravel", "vpn", "mikrotik"],
+    "description": "Ruang NOC NATWAIPI - SSTP Console application",
+    "keywords": ["laravel", "vpn", "mikrotik", "natwaipi"],
     "license": "proprietary",
     "require": {
         "php": "^8.3",

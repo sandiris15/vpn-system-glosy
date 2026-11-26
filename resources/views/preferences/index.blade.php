@@ -55,4 +55,15 @@
             <p class="px-2 text-xs leading-5 text-slate-500">Wallpaper dan preferensi dikelola di Mode Managed. Sesi Mandiri tidak menyimpan kredensial router.</p>
         </aside>
     </form>
+    <form method="POST" action="{{ route('preferences.sidebar.update') }}" class="glass-panel mt-6 space-y-4 p-5 sm:p-7">
+        @csrf
+        @method('PUT')
+        <div>
+            <h2 class="font-semibold text-white">Teks bagian bawah sidebar</h2>
+            <p class="mt-1 text-xs text-slate-400">Hanya berlaku untuk akun Anda. Kosongkan kolom untuk menggunakan teks bawaan.</p>
+        </div>
+        <label class="block"><span class="field-label">Judul sidebar</span><input name="sidebar_title" class="input-glass" maxlength="60" value="{{ old('sidebar_title', $preference->sidebar_title) }}" placeholder="Managed CHR"></label>
+        <label class="block"><span class="field-label">Keterangan sidebar</span><textarea name="sidebar_description" class="input-glass" maxlength="240" rows="3" placeholder="Node utama dipilih otomatis; akun VPN dikelola di seluruh cluster.">{{ old('sidebar_description', $preference->sidebar_description) }}</textarea></label>
+        <button type="submit" class="button-primary">Simpan teks sidebar</button>
+    </form>
 @endsection

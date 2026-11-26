@@ -11,16 +11,9 @@
     <div class="wallpaper fixed inset-0 -z-10" aria-hidden="true"></div>
     <div class="fixed inset-0 -z-10 bg-slate-950/55" aria-hidden="true"></div>
     <main class="w-full max-w-[460px]">
-        <a href="/" class="mb-8 flex items-center justify-center gap-3">
-            <span class="grid h-12 w-12 place-items-center rounded-2xl bg-rose-300/15 text-rose-100 ring-1 ring-rose-100/25">
-                <svg class="h-7 w-7" viewBox="0 0 64 64" fill="none" aria-hidden="true">
-                    <path d="M32 5 53 13v16c0 14-8 24-21 30C19 53 11 43 11 29V13L32 5Z" fill="#0f172a" stroke="#fb7185" stroke-width="2.5" stroke-linejoin="round"/>
-                    <path d="M21 32h8l5-9 7 18 4-9h-3" stroke="#67e8f9" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                    <circle cx="21" cy="32" r="2.5" fill="#fb7185"/>
-                    <circle cx="45" cy="32" r="2.5" fill="#fb7185"/>
-                </svg>
-            </span>
-            <span><span class="block text-lg font-semibold">RUANG NOC NAT WAIPI</span><span class="block text-xs text-slate-400">Network operations portal</span></span>
+        <a href="/" class="mb-8 flex flex-col items-center gap-2" aria-label="Nat Waipi - Ruang Network Office Center">
+            <img src="/images/nat-waipi.png" alt="Nat Waipi" class="h-auto w-56 max-w-full">
+            <span class="text-xs font-semibold tracking-wide text-slate-300">RUANG NETWORK OFFICE CENTER</span>
         </a>
         <section class="glass-panel p-6 sm:p-8">
             <div class="mb-7">

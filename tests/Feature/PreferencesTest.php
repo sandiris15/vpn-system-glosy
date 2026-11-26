@@ -88,6 +88,63 @@ class PreferencesTest extends TestCase
             ->assertNotFound();
     }
 
+    public function test_sidebar_text_is_personal_and_does_not_change_wallpaper_preferences(): void
+    {
+        $user = $this->createAuthorizedUser();
+        $server = $user->servers()->first();
+        $user->preference()->create([
+            'wallpaper_id' => 'violet-night',
+            'blur' => 12,
+            'overlay' => 35,
+        ]);
+        $otherUser = User::query()->create([
+            'name' => 'Other operator',
+            'email' => 'other@example.test',
+            'password' => 'correct horse battery staple',
+        ]);
+        $otherUser->servers()->attach($server);
+
+        $this->actingAs($user)->put('/preferences/sidebar', [
+            'sidebar_title' => 'NOC pribadi',
+            'sidebar_description' => '<script>alert(1)</script>',
+        ])->assertRedirect('/preferences');
+
+        $this->assertDatabaseHas('user_preferences', [
+            'user_id' => $user->getKey(),
+            'wallpaper_id' => 'violet-night',
+            'blur' => 12,
+            'overlay' => 35,
+            'sidebar_title' => 'NOC pribadi',
+        ]);
+        $this->get('/preferences')->assertOk()
+            ->assertSee('NOC pribadi')
+            ->assertSee('&lt;script&gt;alert(1)&lt;/script&gt;', false)
+            ->assertDontSee('<script>alert(1)</script>', false);
+
+        $this->actingAs($otherUser)->get('/preferences')->assertOk()
+            ->assertDontSee('NOC pribadi')
+            ->assertSee('Managed CHR');
+
+        $this->actingAs($user)->put('/preferences/sidebar', [
+            'sidebar_title' => '',
+            'sidebar_description' => '',
+        ])->assertRedirect('/preferences');
+        $this->get('/preferences')->assertSee('Managed CHR');
+        $this->assertNull($user->fresh()->preference->sidebar_title);
+    }
+
+    public function test_sidebar_text_rejects_excessive_length(): void
+    {
+        $user = $this->createAuthorizedUser();
+
+        $this->actingAs($user)->from('/preferences')->put('/preferences/sidebar', [
+            'sidebar_title' => str_repeat('a', 61),
+            'sidebar_description' => str_repeat('b', 241),
+        ])->assertRedirect('/preferences')->assertSessionHasErrors(['sidebar_title', 'sidebar_description']);
+
+        $this->assertDatabaseCount('user_preferences', 0);
+    }
+
     private function createAuthorizedUser(): User
     {
         $user = User::query()->create([

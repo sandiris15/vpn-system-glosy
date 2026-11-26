@@ -54,23 +54,13 @@
                 <span class="h-2.5 w-2.5 rounded-full bg-amber-300"></span>
                 <span class="h-2.5 w-2.5 rounded-full bg-emerald-400"></span>
             </div>
-            <a href="/dashboard" class="mb-9 flex items-center gap-3 px-2" aria-label="RUANG NOC NAT WAIPI">
-                <span class="grid h-11 w-11 place-items-center rounded-2xl bg-rose-300/15 text-rose-200 ring-1 ring-rose-200/25">
-                    <svg class="h-7 w-7" viewBox="0 0 64 64" fill="none" aria-hidden="true">
-                        <path d="M32 5 53 13v16c0 14-8 24-21 30C19 53 11 43 11 29V13L32 5Z" fill="#0f172a" stroke="#fb7185" stroke-width="2.5" stroke-linejoin="round"/>
-                        <path d="M21 32h8l5-9 7 18 4-9h-3" stroke="#67e8f9" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                        <circle cx="21" cy="32" r="2.5" fill="#fb7185"/>
-                        <circle cx="45" cy="32" r="2.5" fill="#fb7185"/>
-                    </svg>
-                </span>
-                <span>
-                    <span class="block text-sm font-semibold tracking-wide text-white">RUANG NOC NAT WAIPI</span>
-                    <span class="mt-0.5 block text-xs text-slate-400">Network operations</span>
-                </span>
-                <button type="button" class="ml-auto rounded-lg p-2 text-slate-400 hover:bg-white/10 lg:hidden" @click="sidebarOpen = false" aria-label="Tutup menu">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </a>
+            <div class="mb-9 flex items-start gap-2 px-2">
+                <a href="/dashboard" class="min-w-0 flex-1" aria-label="Nat Waipi - Ruang Network Office Center">
+                    <img src="/images/nat-waipi.png" alt="Nat Waipi" class="h-auto w-44 max-w-full">
+                    <span class="mt-2 block text-[10px] font-semibold tracking-wide text-slate-300">RUANG NETWORK OFFICE CENTER</span>
+                </a>
+                <button type="button" class="rounded-lg p-2 text-slate-400 hover:bg-white/10 lg:hidden" @click="sidebarOpen = false" aria-label="Tutup menu"><span aria-hidden="true">×</span></button>
+            </div>
 
             <div class="mb-3 px-3 text-[10px] font-semibold uppercase tracking-[.2em] text-slate-500">Workspace</div>
             <nav class="space-y-1" aria-label="Navigasi utama">
@@ -100,11 +90,9 @@
                         <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-300 opacity-60"></span>
                         <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-300"></span>
                     </span>
-                    {{ ($mode ?? 'managed') === 'mandiri' ? 'Mode Mandiri' : 'Managed CHR' }}
+                    <span class="min-w-0 break-words">{{ ($mode ?? 'managed') === 'mandiri' ? 'Mode Mandiri' : ($displayPreference?->sidebar_title ?? 'Managed CHR') }}</span>
                 </div>
-                <p class="mt-2 text-xs leading-5 text-slate-400">
-                    {{ ($mode ?? 'managed') === 'mandiri' ? 'Kredensial router hanya digunakan selama sesi provisioning.' : 'Node utama dipilih otomatis; akun VPN dikelola di seluruh cluster.' }}
-                </p>
+                <p class="mt-2 whitespace-pre-line break-words text-xs leading-5 text-slate-400">{{ ($mode ?? 'managed') === 'mandiri' ? 'Kredensial router hanya digunakan selama sesi provisioning.' : ($displayPreference?->sidebar_description ?? 'Node utama dipilih otomatis; akun VPN dikelola di seluruh cluster.') }}</p>
                 @if(($mode ?? 'managed') === 'managed')
                     <form method="POST" action="/logout" class="mt-3">
                         @csrf
